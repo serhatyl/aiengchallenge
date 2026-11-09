@@ -16,3 +16,8 @@ class ScanResponse(BaseModel):
     directory: str
     total_files: int = Field(ge=0)
     files: list[FileOutput]
+
+
+class AskRequest(BaseModel):
+    question: str
+    instructions: str
