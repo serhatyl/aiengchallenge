@@ -4,8 +4,8 @@ Hedefim, mevcut yazılım ve frontend deneyimimi kullanarak AI Engineering alan�
 
 ## İlerleme durumu
 
-- **Tamamlanan:** Gün 1–11
-- **Sıradaki:** Gün 12 — JSON/structured output şeması tanımlamak ve başarısız çıktıyı ele almak
+- **Tamamlanan:** Gün 1–12 (Gün 12 şema üretimi başarılı; hata durumu ayrıca doğrulanmadı)
+- **Sıradaki:** Gün 13 — timeout, retry, rate limit ve kullanıcıya dönük hata davranışı
 - Her günün sonunda çıktıyı, takıldığım noktayı ve sonraki adımı kaydedeceğim.
 
 ## Gün gün çalışma kaydı
@@ -110,6 +110,17 @@ Hedefim, mevcut yazılım ve frontend deneyimimi kullanarak AI Engineering alan�
 - **Kontrol notu:** Üç denemede soruyu ve modeli sabit tuttum. Kullanılan system talimatlarını ayrıca deney günlüğünde saklamalıyım ki sonuçlar tekrarlanabilsin.
 - **Çıktı:** Üç farklı talimatla karşılaştırmalı model yanıtları ve gecikme/token ölçümleri.
 
+### Gün 12 — Yapılandırılmış çıktı ve Pydantic şeması
+
+- Model yanıtını `AskResponse` Pydantic şemasına göre üretmek için Responses API'nin yapılandırılmış çıktı akışını kullandım.
+- Başarılı denemede JSON yanıtı `answer` ve `key_points` alanlarına uydu.
+- Soru: “Türkiye'nin başkenti neresidir?”
+- Yanıt: “Türkiye'nin başkenti Ankara'dır.” Önemli nokta: Ankara, Türkiye'nin idari başkentidir.
+- Gecikme: **3098.02 ms**
+- Kullanım: **89 girdi tokenı**, **29 çıktı tokenı**, **118 toplam token**
+- **Hata davranışı:** Kodda beklenen yapı parse edilemezse `parsed is None` kontrolüyle HTTP 502 dönmesi eklendi; bu hata yolu henüz ayrıca çalıştırılıp doğrulanmadı.
+- **Çıktı:** `/ask` endpoint'inden şemaya uygun cevap ve önemli noktalar.
+
 ## Sonraki adım
 
-**Gün 12:** `/ask` yanıtı için bir Pydantic şeması belirle ve model çıktısını bu yapıya göre üretmeyi dene. Geçersiz veya beklenmeyen çıktının nasıl ele alınacağını da ekle.
+**Gün 13:** LLM çağrısı için timeout ve geçici hatalarda retry davranışını ele al; rate limit ve sağlayıcı hatalarını kullanıcıya anlaşılır biçimde döndür. Sırları ve teknik detayları hata yanıtına koyma.

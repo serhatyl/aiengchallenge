@@ -2,10 +2,10 @@ import os
 import time
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from openai import OpenAI
 
-from schemas import AskRequest
+from schemas import AskRequest, AskResponse
 
 load_dotenv()
 app = FastAPI()
@@ -29,18 +29,27 @@ def ask(request: AskRequest):
         # This is the default and can be omitted
         api_key=os.environ.get("OPENAI_API_KEY"),
     )
-    response = client.responses.create(
+    response = client.responses.parse(
         model="gpt-4.1-mini",
         instructions=request.instructions,
         input=request.question,
+        text_format=AskResponse,
     )
+
+    parsed = response.output_parsed
+
+    if parsed is None:
+        raise HTTPException(
+            status_code=502, detail="Model beklenen yanıt formatını üretemedi."
+        )
 
     latency_ms = round((time.perf_counter() - started_at) * 1000, 2)
     usage = response.usage
 
     return {
         "question": request.question,
-        "answer": response.output_text,
+        "answer": parsed.answer,
+        "key_points": parsed.key_points,
         "latency_ms": latency_ms,
         "usage": {
             "input_tokens": usage.input_tokens if usage else None,

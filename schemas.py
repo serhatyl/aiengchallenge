@@ -21,3 +21,8 @@ class ScanResponse(BaseModel):
 class AskRequest(BaseModel):
     question: str
     instructions: str
+
+
+class AskResponse(BaseModel):
+    answer: str
+    key_points: list[str]
