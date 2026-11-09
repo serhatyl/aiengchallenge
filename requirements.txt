@@ -1,0 +1,4 @@
+uvicorn[standard]
+pydantic>=2,<3
+fastapi
+dotenv
